@@ -11,18 +11,15 @@ export default function AboutPage() {
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
-            <Card className="overflow-hidden">
-                <div className="grid md:grid-cols-2">
-                    <div className="p-6 flex flex-col justify-center">
-                        <h2 className="font-headline text-2xl text-primary mb-3">Our Mission</h2>
-                        <p className="text-muted-foreground">
-                            At Sayan Quotes, we believe that powerful words deserve a special place in your home. Our mission is to provide you with high-quality, beautifully crafted image frames that turn your favorite quotes into works of art. Whether it's for inspiration, motivation, or a cherished memory, our frames are designed to be a perfect fit for any wall or space.
-                        </p>
-                    </div>
-                    <div className="relative h-64 md:h-auto">
-                        <Image src="https://placehold.co/600x400" alt="Crafting a frame" layout="fill" objectFit="cover" data-ai-hint="workshop art" />
-                    </div>
-                </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl text-primary">Our Mission</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">
+                        At Sayan Quotes, we believe that powerful words deserve a special place in your home. Our mission is to provide you with high-quality, beautifully crafted image frames that turn your favorite quotes into works of art. Whether it's for inspiration, motivation, or a cherished memory, our frames are designed to be a perfect fit for any wall or space.
+                    </p>
+                </CardContent>
             </Card>
 
             <Card>
