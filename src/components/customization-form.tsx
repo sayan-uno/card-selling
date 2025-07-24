@@ -187,6 +187,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
         </Card>
 
         <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg">Submit Order</Button>
+        <p className="text-xs text-center text-muted-foreground mt-2">After submitting, we'll contact you with a demo of your custom frame for your approval.</p>
       </form>
     </Form>
   );
