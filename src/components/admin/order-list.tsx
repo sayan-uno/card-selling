@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, Check, X, ArrowUpDown, Loader2 } from "lucide-react";
+import { Eye, Check, X, ArrowUpDown, Loader2, Download, MessageSquare, Ruler } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,14 +15,15 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
+import { Badge } from '../ui/badge';
 
 interface Order {
   _id: string;
   frameId: number;
   frameName: string;
   framePrice: number;
-  quote: string;
-  author: string;
+  quote?: string;
+  author?: string;
   country: string;
   state: string;
   district: string;
@@ -33,6 +34,10 @@ interface Order {
   email: string;
   createdAt: string;
   photoOption: string;
+  size?: string;
+  customMessage?: string;
+  mode: 'quote' | 'photo';
+  photoUrl?: string;
 }
 
 const frames = [
@@ -62,17 +67,18 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc', newStatus: string) => {
+  const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/orders?status=${newStatus}&page=${pageNum}&limit=5&sort=${currentSort}`);
+      const response = await fetch(`/api/orders?status=${status}&page=1&limit=5&sort=${sortOrder}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch orders');
       }
       const data = await response.json();
-      setOrders(prev => pageNum === 1 ? data.orders : [...prev, ...data.orders]);
+      setOrders(data.orders);
       setTotal(data.total);
+      setPage(1);
     } catch (error) {
       toast({
         title: "Error Fetching Orders",
@@ -82,19 +88,35 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [status, sortOrder, toast]);
 
   useEffect(() => {
-    setPage(1);
-    setOrders([]);
-    fetchOrders(1, sortOrder, status);
-  }, [status, sortOrder, fetchOrders]);
+    fetchOrders();
+  }, [fetchOrders]);
 
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     const newPage = page + 1;
-    setPage(newPage);
-    fetchOrders(newPage, sortOrder, status);
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/orders?status=${status}&page=${newPage}&limit=5&sort=${sortOrder}`);
+       if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch more orders');
+      }
+      const data = await response.json();
+      setOrders(prev => [...prev, ...data.orders]);
+      setPage(newPage);
+
+    } catch(error) {
+       toast({
+        title: "Error Loading More",
+        description: (error as Error).message,
+        variant: "destructive"
+      });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   const toggleSortOrder = () => {
@@ -161,17 +183,26 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
               <CardHeader>
                 <CardTitle className="text-xl font-headline flex justify-between items-center">
                     <span>Order for {order.frameName}</span>
-                    <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order)}>
-                        <Eye className="h-5 w-5" />
-                    </Button>
+                     <div className='flex items-center gap-2'>
+                        <Badge variant={order.mode === 'quote' ? 'default' : 'secondary'}>{order.mode}</Badge>
+                        <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order)}>
+                            <Eye className="h-5 w-5" />
+                        </Button>
+                    </div>
                 </CardTitle>
                 <CardDescription>
                     Ordered on: {new Date(order.createdAt).toLocaleString()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p><strong>Quote:</strong> {order.quote}</p>
-                <p><strong>Author:</strong> {order.author}</p>
+                {order.mode === 'quote' ? (
+                    <>
+                        <p><strong>Quote:</strong> {order.quote}</p>
+                        <p><strong>Author:</strong> {order.author}</p>
+                    </>
+                ) : (
+                    <p><strong>Order Type:</strong> Photo Only</p>
+                )}
                 <p><strong>Contact:</strong> {order.email} / {order.phone}</p>
               </CardContent>
               {status === 'pending' && (
@@ -193,7 +224,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
       {hasMore && (
         <div className="mt-6 text-center">
             <Button onClick={handleLoadMore} disabled={isLoading}>
-                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...</> : 'Load More'}
+                {isLoading && page > 1 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...</> : 'Load More'}
             </Button>
         </div>
       )}
@@ -216,15 +247,47 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
                             </div>
                         )}
                         <Card>
-                            <CardHeader><CardTitle className='text-lg'>Frame & Quote</CardTitle></CardHeader>
+                            <CardHeader><CardTitle className='text-lg flex items-center justify-between'>
+                                Frame Details <Badge variant="secondary">Mode: {selectedOrder.mode}</Badge>
+                                </CardTitle></CardHeader>
                             <CardContent className="space-y-1">
                                 <p><strong>Frame:</strong> {selectedOrder.frameName} (ID: {selectedOrder.frameId})</p>
-                                <p><strong>Price:</strong> ₹{selectedOrder.framePrice}</p>
-                                <p><strong>Quote:</strong> "{selectedOrder.quote}"</p>
-                                <p><strong>Author:</strong> {selectedOrder.author}</p>
-                                <p><strong>Photo Option:</strong> {selectedOrder.photoOption}</p>
+                                <p><strong>Price:</strong> ₹{selectedOrder.framePrice} (minimum)</p>
+                                {selectedOrder.size && <p><strong>Requested Size:</strong> {selectedOrder.size}</p>}
+
+                                {selectedOrder.mode === 'quote' && (
+                                    <>
+                                        <p><strong>Quote:</strong> "{selectedOrder.quote}"</p>
+                                        <p><strong>Author:</strong> {selectedOrder.author}</p>
+                                        <p><strong>Photo Option:</strong> {selectedOrder.photoOption}</p>
+                                    </>
+                                )}
+
+                                {selectedOrder.photoUrl && (
+                                    <div className='pt-2'>
+                                        <p><strong>Uploaded Photo:</strong></p>
+                                        <div className='relative aspect-video w-full rounded-md overflow-hidden my-2'>
+                                            <Image src={selectedOrder.photoUrl} alt="User upload" fill className='object-contain' />
+                                        </div>
+                                        <Button asChild size="sm">
+                                            <a href={selectedOrder.photoUrl} download target="_blank" rel="noopener noreferrer">
+                                                <Download className="mr-2 h-4 w-4"/> Download Photo
+                                            </a>
+                                        </Button>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
+
+                        {selectedOrder.customMessage && (
+                            <Card>
+                                <CardHeader><CardTitle className='text-lg flex items-center gap-2'><MessageSquare /> Custom Message</CardTitle></CardHeader>
+                                <CardContent>
+                                    <p>{selectedOrder.customMessage}</p>
+                                </CardContent>
+                            </Card>
+                        )}
+                        
                         <Card>
                             <CardHeader><CardTitle className='text-lg'>Shipping Address</CardTitle></CardHeader>
                             <CardContent className="space-y-1">

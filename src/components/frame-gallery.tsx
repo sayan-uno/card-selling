@@ -1,8 +1,9 @@
+
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CustomizationForm } from "./customization-form";
@@ -66,7 +67,10 @@ export function FrameGallery() {
                 </div>
               </div>
                <div className="flex justify-between items-center mt-auto">
-                <p className="text-xl font-bold text-primary">₹{frame.price}</p>
+                <div>
+                  <p className="text-xl font-bold text-primary">from ₹{frame.price}</p>
+                  <p className="text-xs text-muted-foreground">Price varies with size</p>
+                </div>
               </div>
             </CardContent>
             <CardFooter>

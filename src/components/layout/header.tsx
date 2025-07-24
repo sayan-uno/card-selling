@@ -14,7 +14,6 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/privacy-policy", label: "Privacy Policy" },
-  { href: "/admin", label: "Admin", icon: ShieldCheck },
 ];
 
 export function Header() {

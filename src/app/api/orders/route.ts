@@ -7,8 +7,8 @@ const orderSchema = new mongoose.Schema({
   frameId: { type: Number, required: true },
   frameName: { type: String, required: true },
   framePrice: { type: Number, required: true },
-  quote: { type: String, required: true },
-  author: { type: String, required: true },
+  quote: { type: String, maxLength: 500 },
+  author: { type: String, maxLength: 100 },
   photoOption: { type: String, required: true },
   country: { type: String, required: true },
   state: { type: String, required: true },
@@ -16,9 +16,13 @@ const orderSchema = new mongoose.Schema({
   pinCode: { type: String, required: true },
   landmark: { type: String },
   villageOrCity: { type: String, required: true },
-  phone: { type: String, required: true },
-  email: { type: String, required: true },
+  phone: { type: String, required: true, maxLength: 20 },
+  email: { type: String, required: true, maxLength: 50 },
   status: { type: String, default: 'pending' }, // pending, solved, denied
+  size: { type: String },
+  customMessage: { type: String },
+  mode: { type: String, required: true }, // 'quote' or 'photo'
+  photoUrl: { type: String } // For uploaded photos
 }, { timestamps: true });
 
 
@@ -53,6 +57,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Order created successfully' }, { status: 201 });
   } catch (error) {
     console.error(error);
+    if (error instanceof mongoose.Error.ValidationError) {
+        return NextResponse.json({ message: error.message }, { status: 400 });
+    }
     const errorMessage = error instanceof Error ? error.message : 'Internal server error';
     return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
