@@ -63,16 +63,16 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (pageNum: number, sort: 'asc' | 'desc') => {
+  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc') => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/orders?status=${status}&page=${pageNum}&limit=5&sort=${sort}`);
+      const response = await fetch(`/api/orders?status=${status}&page=${pageNum}&limit=5&sort=${currentSort}`);
       if (!response.ok) {
         throw new Error('Failed to fetch orders');
       }
       const data = await response.json();
       setOrders(prev => pageNum === 1 ? data.orders : [...prev, ...data.orders]);
-      setHasMore((pageNum * 5) < data.total);
+      setHasMore(data.orders.length > 0 && (pageNum * 5) < data.total);
     } catch (error) {
       toast({
         title: "Error",
@@ -87,7 +87,6 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   useEffect(() => {
     setOrders([]);
     setPage(1);
-    setHasMore(true);
     fetchOrders(1, sortOrder);
   }, [status, sortOrder, fetchOrders]);
 
@@ -187,7 +186,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
         </div>
       )}
 
-      {hasMore && (
+      {hasMore && !isLoading && (
         <div className="mt-6 text-center">
             <Button onClick={handleLoadMore} disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...</> : 'Load More'}
@@ -247,3 +246,5 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
+
+    
