@@ -72,7 +72,7 @@ export async function GET(request: Request) {
         const sortOrder = sort === 'desc' ? -1 : 1;
         
         const query: { status?: string } = {};
-        if (status) {
+        if (status && ['pending', 'solved', 'denied'].includes(status)) {
             query.status = status;
         }
 

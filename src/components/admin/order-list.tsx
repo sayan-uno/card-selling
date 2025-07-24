@@ -62,10 +62,10 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc') => {
+  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc', newStatus: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/orders?status=${status}&page=${pageNum}&limit=5&sort=${currentSort}`);
+      const response = await fetch(`/api/orders?status=${newStatus}&page=${pageNum}&limit=5&sort=${currentSort}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch orders');
@@ -82,19 +82,19 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     } finally {
       setIsLoading(false);
     }
-  }, [status, toast]);
+  }, [toast]);
 
   useEffect(() => {
     setPage(1);
     setOrders([]);
-    fetchOrders(1, sortOrder);
-  }, [status, sortOrder]);
+    fetchOrders(1, sortOrder, status);
+  }, [status, sortOrder, fetchOrders]);
 
 
   const handleLoadMore = () => {
     const newPage = page + 1;
     setPage(newPage);
-    fetchOrders(newPage, sortOrder);
+    fetchOrders(newPage, sortOrder, status);
   };
 
   const toggleSortOrder = () => {
