@@ -95,13 +95,13 @@ export function FrameGallery() {
       </Dialog>
       
       <Dialog open={isImageViewerOpen} onOpenChange={setImageViewerOpen}>
-        <DialogContent className="max-w-3xl h-[80vh] p-2">
-            <DialogHeader>
-              <DialogTitle className="sr-only">Image Viewer: {viewingImage?.alt}</DialogTitle>
-              <DialogDescription className="sr-only">A larger view of the selected frame.</DialogDescription>
+        <DialogContent className="max-w-3xl h-[80vh] p-2 flex flex-col">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Image Viewer: {viewingImage?.alt}</DialogTitle>
+              <DialogDescription>A larger view of the selected frame.</DialogDescription>
             </DialogHeader>
             {viewingImage && (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full flex-grow">
                     <Image 
                         src={viewingImage.src} 
                         alt={viewingImage.alt} 
