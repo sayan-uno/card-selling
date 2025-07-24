@@ -72,7 +72,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
       }
       const data = await response.json();
       setOrders(prev => pageNum === 1 ? data.orders : [...prev, ...data.orders]);
-      setHasMore(data.orders.length === 5);
+      setHasMore((pageNum * 5) < data.total);
     } catch (error) {
       toast({
         title: "Error",
