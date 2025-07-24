@@ -122,7 +122,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     reader.readAsDataURL(file);
     reader.onload = () => {
         const base64 = reader.result as string;
-        form.setValue('photoUrl', base64);
+        form.setValue('photoUrl', base64, { shouldValidate: true });
         setIsUploading(false);
         toast({ title: 'Upload Successful', description: 'Your photo has been prepared.' });
     };
@@ -393,5 +393,3 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     </Form>
   );
 }
-
-    

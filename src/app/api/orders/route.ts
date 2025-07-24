@@ -34,9 +34,6 @@ async function connectToDatabase() {
   if (mongoose.connection.readyState >= 1) {
     return;
   }
-  // IMPORTANT: You need to add your MongoDB connection string to your environment variables.
-  // Create a .env file in the root of your project and add the following line:
-  // MONGODB_URI="your_mongodb_connection_string"
   if (!process.env.MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable inside .env');
   }
@@ -101,5 +98,3 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: errorMessage, error: true }, { status: 500 });
     }
 }
-
-    

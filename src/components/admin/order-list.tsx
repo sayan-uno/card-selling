@@ -67,7 +67,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (isNewSort = false) => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/orders?status=${status}&page=1&limit=5&sort=${sortOrder}`);
@@ -91,8 +91,8 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   }, [status, sortOrder, toast]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    fetchOrders(true);
+  }, [sortOrder, status, fetchOrders]);
 
 
   const handleLoadMore = async () => {
@@ -184,7 +184,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
                 <CardTitle className="text-xl font-headline flex justify-between items-center">
                     <span>Order for {order.frameName}</span>
                      <div className='flex items-center gap-2'>
-                        <Badge variant={order.mode === 'quote' ? 'default' : 'secondary'}>{order.mode}</Badge>
+                        <Badge variant={order.mode === 'quote' ? 'default' : 'secondary'}>{order.mode === 'quote' ? "Quote" : "Photo Only"}</Badge>
                         <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order)}>
                             <Eye className="h-5 w-5" />
                         </Button>
@@ -221,13 +221,15 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
         </div>
       )}
 
-      {hasMore && (
+      {hasMore && !isLoading && (
         <div className="mt-6 text-center">
-            <Button onClick={handleLoadMore} disabled={isLoading}>
-                {isLoading && page > 1 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...</> : 'Load More'}
+            <Button onClick={handleLoadMore}>
+                {'Load More'}
             </Button>
         </div>
       )}
+       {isLoading && orders.length > 0 && <div className="flex justify-center mt-4"><Loader2 className="mr-2 h-4 w-4 animate-spin"/></div> }
+
 
       <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[600px] p-0">
@@ -266,7 +268,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
                                 {selectedOrder.photoUrl && (
                                     <div className='pt-2'>
                                         <p><strong>Uploaded Photo:</strong></p>
-                                        <div className='relative aspect-video w-full rounded-md overflow-hidden my-2'>
+                                        <div className='relative aspect-video w-full rounded-md overflow-hidden my-2 bg-muted'>
                                             <Image src={selectedOrder.photoUrl} alt="User upload" fill className='object-contain' />
                                         </div>
                                         <Button asChild size="sm">
@@ -313,5 +315,3 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
-
-    
