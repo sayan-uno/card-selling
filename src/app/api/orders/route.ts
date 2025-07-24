@@ -61,8 +61,8 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const status = searchParams.get('status') || 'pending';
         const page = parseInt(searchParams.get('page') || '1', 10);
-        const limit = parseInt(search_params.get('limit') || '5', 10);
-        const sort = search_params.get('sort') || 'asc';
+        const limit = parseInt(searchParams.get('limit') || '5', 10);
+        const sort = searchParams.get('sort') || 'asc';
 
         const skip = (page - 1) * limit;
         const sortOrder = sort === 'desc' ? -1 : 1;
