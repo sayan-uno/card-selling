@@ -44,7 +44,10 @@ export async function POST(request: Request) {
     await connectToDatabase();
     const body = await request.json();
 
-    const newOrder = new Order(body);
+    const newOrder = new Order({
+      ...body,
+      status: 'pending' // Explicitly set status
+    });
     await newOrder.save();
 
     return NextResponse.json({ message: 'Order created successfully' }, { status: 201 });
