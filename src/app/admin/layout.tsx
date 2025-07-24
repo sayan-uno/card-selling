@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { List, CheckCircle, XCircle, Shield, KeyRound } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
