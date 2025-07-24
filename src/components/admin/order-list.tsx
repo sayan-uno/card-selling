@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, Check, X, ArrowUpDown, Loader2, Download, MessageSquare, Ruler } from "lucide-react";
+import { Eye, Check, X, ArrowUpDown, Loader2, Download, MessageSquare } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -257,8 +257,8 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
 
                                 {selectedOrder.mode === 'quote' && (
                                     <>
-                                        <p><strong>Quote:</strong> "{selectedOrder.quote}"</p>
-                                        <p><strong>Author:</strong> {selectedOrder.author}</p>
+                                        {selectedOrder.quote && <p><strong>Quote:</strong> "{selectedOrder.quote}"</p>}
+                                        {selectedOrder.author && <p><strong>Author:</strong> {selectedOrder.author}</p>}
                                         <p><strong>Photo Option:</strong> {selectedOrder.photoOption}</p>
                                     </>
                                 )}
@@ -270,7 +270,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
                                             <Image src={selectedOrder.photoUrl} alt="User upload" fill className='object-contain' />
                                         </div>
                                         <Button asChild size="sm">
-                                            <a href={selectedOrder.photoUrl} download target="_blank" rel="noopener noreferrer">
+                                            <a href={selectedOrder.photoUrl} download={`order-${selectedOrder._id}.png`} target="_blank" rel="noopener noreferrer">
                                                 <Download className="mr-2 h-4 w-4"/> Download Photo
                                             </a>
                                         </Button>
@@ -313,3 +313,5 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
+
+    

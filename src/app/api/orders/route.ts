@@ -20,9 +20,9 @@ const orderSchema = new mongoose.Schema({
   email: { type: String, required: true, maxLength: 50 },
   status: { type: String, default: 'pending' }, // pending, solved, denied
   size: { type: String },
-  customMessage: { type: String },
+  customMessage: { type: String, maxLength: 1000 },
   mode: { type: String, required: true }, // 'quote' or 'photo'
-  photoUrl: { type: String } // For uploaded photos
+  photoUrl: { type: String } // For uploaded photos (Base64)
 }, { timestamps: true });
 
 
@@ -47,11 +47,13 @@ export async function POST(request: Request) {
   try {
     await connectToDatabase();
     const body = await request.json();
-
+    
+    // Explicitly set status to 'pending' to ensure it's set correctly
     const newOrder = new Order({
       ...body,
-      status: 'pending' // Explicitly set status
+      status: 'pending'
     });
+    
     await newOrder.save();
 
     return NextResponse.json({ message: 'Order created successfully' }, { status: 201 });
@@ -99,3 +101,5 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: errorMessage, error: true }, { status: 500 });
     }
 }
+
+    

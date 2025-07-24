@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Quote, Upload, Image as ImageIcon, Ruler, MessageSquare, BookImage, ImagePlay, Loader2 } from "lucide-react";
+import { Quote, Upload, Image as ImageIcon, Ruler, MessageSquare, BookImage, ImagePlay, Loader2, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
@@ -37,7 +37,7 @@ const formSchema = z.object({
   phone: z.string().min(10, "A valid phone number is required.").max(20, "Phone number is too long."),
   email: z.string().email("A valid email address is required.").max(50, "Email address is too long."),
   size: z.string().min(3, "Size is required (e.g., 8x10 inches)."),
-  customMessage: z.string().optional(),
+  customMessage: z.string().max(1000).optional(),
   mode: z.enum(["quote", "photo"]),
   photoUrl: z.string().optional(),
 }).superRefine((data, ctx) => {
@@ -64,6 +64,13 @@ const formSchema = z.object({
             path: ['photoUrl']
         });
     }
+    if(data.photoOption === 'upload' && !data.photoUrl) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please upload a photo when this option is selected.",
+            path: ['photoUrl']
+        });
+    }
 });
 
 type CustomizationFormProps = {
@@ -73,7 +80,6 @@ type CustomizationFormProps = {
 export function CustomizationForm({ frame }: CustomizationFormProps) {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
-  const [mode, setMode] = useState<'quote' | 'photo'>('quote');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -96,11 +102,11 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     },
   });
 
+  const mode = form.watch("mode");
   const photoOption = form.watch("photoOption");
 
   const handleModeChange = (isPhotoOnly: boolean) => {
     const newMode = isPhotoOnly ? 'photo' : 'quote';
-    setMode(newMode);
     form.setValue('mode', newMode);
     // Clear validation errors when switching modes
     form.clearErrors(['quote', 'author', 'photoUrl']);
@@ -111,28 +117,20 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     if (!file) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'sayan_quotes'); // Replace with your upload preset
-
-    try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/djcalld2i/image/upload`, { // Replace with your cloud name
-            method: 'POST',
-            body: formData,
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            form.setValue('photoUrl', data.secure_url);
-            toast({ title: 'Upload Successful', description: 'Your photo has been uploaded.' });
-        } else {
-            throw new Error('Upload failed');
-        }
-    } catch (error) {
-        toast({ title: 'Upload Error', description: 'Failed to upload photo. Please try again.', variant: 'destructive' });
-    } finally {
+    // Convert file to base64
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+        const base64 = reader.result as string;
+        form.setValue('photoUrl', base64);
         setIsUploading(false);
-    }
+        toast({ title: 'Upload Successful', description: 'Your photo has been prepared.' });
+    };
+    reader.onerror = (error) => {
+        console.error("File reading error:", error);
+        setIsUploading(false);
+        toast({ title: 'Upload Error', description: 'Failed to read the photo. Please try again.', variant: 'destructive' });
+    };
   };
 
 
@@ -145,12 +143,13 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
         })
         return;
     }
+    
     const orderData = {
         frameId: frame.id,
         frameName: frame.name,
         framePrice: frame.price,
-        ...values
-    }
+        ...values,
+    };
 
     try {
         const response = await fetch('/api/orders', {
@@ -195,10 +194,16 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             <CardContent>
                  <div className="flex items-center space-x-2">
                     <BookImage className="text-muted-foreground" />
-                    <Switch
-                        id="mode-switch"
-                        checked={mode === 'photo'}
-                        onCheckedChange={handleModeChange}
+                    <FormField
+                      control={form.control}
+                      name="mode"
+                      render={({ field }) => (
+                        <Switch
+                          id="mode-switch"
+                          checked={field.value === 'photo'}
+                          onCheckedChange={(checked) => handleModeChange(checked)}
+                        />
+                      )}
                     />
                     <ImagePlay className="text-muted-foreground" />
                 </div>
@@ -288,17 +293,28 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             {(mode === 'photo' || photoOption === 'upload') && (
                  <div className="mt-4 space-y-2">
                     <Label htmlFor="photo-upload">Upload your image</Label>
-                    <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} disabled={isUploading}/>
+                    <FormControl>
+                        <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} disabled={isUploading}/>
+                    </FormControl>
                     {isUploading && <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin"/> Uploading...</div>}
-                    {form.getValues('photoUrl') && !isUploading && (
-                        <Alert variant="default" className="mt-2">
-                            <Check className="h-4 w-4" />
-                            <AlertTitle>Upload Complete</AlertTitle>
-                             <AlertDescription>
-                                <a href={form.getValues('photoUrl')} target="_blank" rel="noopener noreferrer" className="underline">View Uploaded Image</a>
-                            </AlertDescription>
-                        </Alert>
-                    )}
+                    <FormField
+                      control={form.control}
+                      name="photoUrl"
+                      render={({ field }) => (
+                        <>
+                          {field.value && !isUploading && (
+                              <Alert variant="default" className="mt-2">
+                                  <Check className="h-4 w-4" />
+                                  <AlertTitle>Upload Complete</AlertTitle>
+                                  <AlertDescription>
+                                      Image is ready to be submitted with your order.
+                                  </AlertDescription>
+                              </Alert>
+                          )}
+                          <FormMessage />
+                        </>
+                      )}
+                    />
                  </div>
             )}
              {mode === 'quote' && photoOption === 'suggest' && (
@@ -333,20 +349,20 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
         <Card>
           <CardHeader><CardTitle className="font-headline">Shipping Address</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField name="country" render={({ field }) => (<FormItem><FormLabel>Country</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="state" render={({ field }) => (<FormItem><FormLabel>State</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="district" render={({ field }) => (<FormItem><FormLabel>District</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="pinCode" render={({ field }) => (<FormItem><FormLabel>PIN Code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="villageOrCity" render={({ field }) => (<FormItem><FormLabel>Village/City</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="landmark" render={({ field }) => (<FormItem><FormLabel>Landmark (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="country" render={({ field }) => (<FormItem><FormLabel>Country</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="state" render={({ field }) => (<FormItem><FormLabel>State</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="district" render={({ field }) => (<FormItem><FormLabel>District</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="pinCode" render={({ field }) => (<FormItem><FormLabel>PIN Code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="villageOrCity" render={({ field }) => (<FormItem><FormLabel>Village/City</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="landmark" render={({ field }) => (<FormItem><FormLabel>Landmark (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader><CardTitle className="font-headline">Contact Information</CardTitle></CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField name="phone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" {...field} maxLength={20} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="email" render={({ field }) => (<FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" {...field} maxLength={50} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="phone" render={({ field }) => (<FormItem><FormLabel>Phone Number</FormLabel><FormControl><Input type="tel" {...field} maxLength={20} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="email" render={({ field }) => (<FormItem><FormLabel>Email Address</FormLabel><FormControl><Input type="email" {...field} maxLength={50} /></FormControl><FormMessage /></FormItem>)} />
           </CardContent>
         </Card>
 
@@ -360,7 +376,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
                         <FormItem>
                         <FormLabel>Any special instructions?</FormLabel>
                         <FormControl>
-                            <Textarea placeholder="E.g., use a specific font, add a small logo, etc." {...field} />
+                            <Textarea placeholder="E.g., use a specific font, add a small logo, etc." {...field} maxLength={1000} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -377,3 +393,5 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     </Form>
   );
 }
+
+    
