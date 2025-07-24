@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Frame } from "lucide-react";
+import { Menu, Frame, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -13,6 +14,7 @@ const navLinks = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
   { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/admin", label: "Admin", icon: ShieldCheck },
 ];
 
 export function Header() {
@@ -31,10 +33,11 @@ export function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-muted-foreground"
+                "transition-colors hover:text-primary flex items-center gap-2",
+                pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href ? "text-primary" : "text-muted-foreground"
               )}
             >
+              {link.icon && <link.icon className="h-4 w-4" />}
               {link.label}
             </Link>
           ))}
@@ -54,10 +57,11 @@ export function Header() {
                     <Link
                       href={link.href}
                       className={cn(
-                        "text-lg",
-                        pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
+                        "text-lg flex items-center gap-3",
+                        pathname.startsWith(link.href) && link.href !== '/' || pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
                       )}
                     >
+                      {link.icon && <link.icon className="h-5 w-5" />}
                       {link.label}
                     </Link>
                    </SheetClose>

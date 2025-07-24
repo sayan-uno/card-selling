@@ -33,15 +33,15 @@ const formSchema = z.object({
   country: z.string().min(2, "Country is required."),
   state: z.string().min(2, "State is required."),
   district: z.string().min(2, "District is required."),
-  pin: z.string().regex(/^\d{6}$/, "A valid 6-digit PIN code is required."),
+  pinCode: z.string().regex(/^\d{6}$/, "A valid 6-digit PIN code is required."),
   landmark: z.string().optional(),
-  city: z.string().min(2, "City/Village is required."),
+  villageOrCity: z.string().min(2, "City/Village is required."),
   phone: z.string().min(10, "A valid phone number is required."),
   email: z.string().email("A valid email address is required."),
 });
 
 type CustomizationFormProps = {
-  frame: { id: number; name: string } | null;
+  frame: { id: number; name: string, price: number } | null;
 };
 
 export function CustomizationForm({ frame }: CustomizationFormProps) {
@@ -56,9 +56,9 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
       country: "India",
       state: "West Bengal",
       district: "",
-      pin: "",
+      pinCode: "",
       landmark: "",
-      city: "",
+      villageOrCity: "",
       phone: "",
       email: "",
     },
@@ -66,13 +66,52 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
 
   const photoOption = form.watch("photoOption");
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ frame, ...values });
-    toast({
-      title: "Order Submitted!",
-      description: "Thank you for your order! We will contact you shortly with a demo of the frame. Once you approve the design, we will deliver it to your address.",
-    });
-    form.reset();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (!frame) {
+        toast({
+            title: "Error",
+            description: "No frame selected.",
+            variant: "destructive"
+        })
+        return;
+    }
+    const orderData = {
+        frameId: frame.id,
+        frameName: frame.name,
+        framePrice: frame.price,
+        ...values
+    }
+
+    try {
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData),
+        });
+
+        if (response.ok) {
+            toast({
+              title: "Order Submitted!",
+              description: "Thank you for your order! We will contact you shortly with a demo of the frame. Once you approve the design, we will deliver it to your address.",
+            });
+            form.reset();
+        } else {
+            const errorData = await response.json();
+            toast({
+                title: "Error submitting order",
+                description: errorData.message || "Something went wrong.",
+                variant: "destructive"
+            });
+        }
+    } catch (error) {
+        toast({
+            title: "Error submitting order",
+            description: "An unexpected error occurred.",
+            variant: "destructive"
+        });
+    }
   }
 
   return (
@@ -172,8 +211,8 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             <FormField name="country" render={({ field }) => (<FormItem><FormLabel>Country</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField name="state" render={({ field }) => (<FormItem><FormLabel>State</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField name="district" render={({ field }) => (<FormItem><FormLabel>District</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="pin" render={({ field }) => (<FormItem><FormLabel>PIN Code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField name="city" render={({ field }) => (<FormItem><FormLabel>Village/City</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField name="pinCode" render={({ field }) => (<FormItem><FormLabel>PIN Code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField name="villageOrCity" render={({ field }) => (<FormItem><FormLabel>Village/City</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField name="landmark" render={({ field }) => (<FormItem><FormLabel>Landmark (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
           </CardContent>
         </Card>
