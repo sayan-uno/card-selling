@@ -1,5 +1,5 @@
 
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import mongoose, { Model } from 'mongoose';
 
 // Define the schema for the order
@@ -58,10 +58,10 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     try {
         await connectToDatabase();
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = request.nextUrl;
         
         const status = searchParams.get('status');
         const page = parseInt(searchParams.get('page') || '1', 10);
