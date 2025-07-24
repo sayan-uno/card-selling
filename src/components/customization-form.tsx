@@ -98,7 +98,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     console.log({ frame, ...values });
     toast({
       title: "Order Submitted!",
-      description: "Thank you! We have received your custom frame order and will be in touch shortly.",
+      description: "Thank you for your order! We will contact you shortly with a demo of the frame. Once you approve the design, we will deliver it to your address.",
     });
     form.reset();
   }
@@ -195,7 +195,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
                   <Alert variant="default" className="bg-secondary">
                     <Lightbulb className="h-4 w-4" />
                     <AlertTitle>AI Photo Suggestion</AlertTitle>
-                    <AlertDescription className="font-mono text-sm">{suggestion}</AlertDescription>
+                    <AlertDescription className="text-sm">Here's a concept for a photo that would match your quote: <span className="font-semibold">{suggestion}</span>. We will find a suitable image and show you in the demo.</AlertDescription>
                   </Alert>
                 )}
               </div>

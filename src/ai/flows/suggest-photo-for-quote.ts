@@ -21,7 +21,7 @@ const SuggestPhotoForQuoteOutputSchema = z.object({
   photoSuggestion: z
     .string()
     .describe(
-      'A photo suggestion, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.' // keep on one line, no newlines
+      'A one or two word suggestion for a photo that matches the quote.'
     ),
 });
 export type SuggestPhotoForQuoteOutput = z.infer<typeof SuggestPhotoForQuoteOutputSchema>;
@@ -36,12 +36,11 @@ const prompt = ai.definePrompt({
   output: {schema: SuggestPhotoForQuoteOutputSchema},
   prompt: `You are an AI assistant that suggests a photo to accompany a quote.
 
-  Based on the following quote, suggest a photo.  The suggestion MUST be returned as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'.
+  Based on the following quote, suggest a one or two word concept for a photo.
 
   Quote: {{{quote}}}
 
-  If the quote is about love, suggest a photo of people in love.  If the quote is about nature, suggest a photo of nature.  If the quote is about sadness, suggest a sad photo.
-  Do not actually GENERATE the image, only return a PROMPT to be used with a separate image generation service like googleai/gemini-2.0-flash-preview-image-generation.
+  If the quote is about love, suggest 'people in love'. If the quote is about nature, suggest 'nature'. If the quote is about sadness, suggest 'sadness'.
 `,
 });
 
