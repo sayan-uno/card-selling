@@ -74,7 +74,7 @@ export function FrameGallery() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground" onClick={() => handleChooseClick(frame)}>
+              <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground hover:scale-105 transition-transform duration-200" onClick={() => handleChooseClick(frame)}>
                 Choose
               </Button>
             </CardFooter>

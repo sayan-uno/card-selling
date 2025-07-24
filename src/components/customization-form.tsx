@@ -300,7 +300,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
                  <div className="mt-4 space-y-2">
                     <Label htmlFor="photo-upload">Upload your image</Label>
                     <FormControl>
-                        <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} disabled={isUploading}/>
+                        <Input id="photo-upload" type="file" accept="image/*" onChange={handlePhotoUpload} disabled={isUploading} className="cursor-pointer"/>
                     </FormControl>
                     {isUploading && <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="w-4 h-4 animate-spin"/> Uploading...</div>}
                     <FormField
@@ -391,7 +391,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={isSubmitting || isUploading}>
+        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 hover:scale-105 transition-transform duration-200" size="lg" disabled={isSubmitting || isUploading}>
             {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin"/> : 'Book a Demo'}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-2">After submitting, we'll contact you with a demo of your custom frame for your approval.</p>
