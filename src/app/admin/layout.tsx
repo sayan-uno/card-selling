@@ -35,8 +35,9 @@ export default function AdminLayout({
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Securely check against environment variable
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+    // This is a simple client-side check. For higher security, this should be
+    // replaced with a proper server-side authentication flow.
+    if (password === 'sayan000') { // Using the password directly for the check
       sessionStorage.setItem('adminAuthenticated', 'true');
       setIsAuthenticated(true);
       toast({ title: 'Authentication Successful', description: 'Welcome, Admin!' });
