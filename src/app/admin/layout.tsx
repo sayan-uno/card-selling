@@ -1,14 +1,11 @@
 "use client"
 
-import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { List, CheckCircle, XCircle, Shield, KeyRound } from "lucide-react";
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent } from "@/components/ui/card";
+import { List, CheckCircle, XCircle } from "lucide-react";
 
 const adminNavLinks = [
   { href: "/admin", label: "Pending Orders", icon: List },
@@ -22,64 +19,6 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const sessionAuth = sessionStorage.getItem('adminAuthenticated');
-    if (sessionAuth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handlePasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // This is a simple client-side check. For higher security, this should be
-    // replaced with a proper server-side authentication flow.
-    if (password === 'sayan000') { // Using the password directly for the check
-      sessionStorage.setItem('adminAuthenticated', 'true');
-      setIsAuthenticated(true);
-      toast({ title: 'Authentication Successful', description: 'Welcome, Admin!' });
-    } else {
-      toast({ title: 'Authentication Failed', description: 'Incorrect password.', variant: 'destructive' });
-    }
-    setPassword('');
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[60vh]">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-headline text-2xl text-primary">
-              <Shield className="w-6 h-6" /> Admin Access
-            </CardTitle>
-            <CardDescription>
-              Please enter the password to access the admin panel.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                  className="pl-10"
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
