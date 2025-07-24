@@ -63,7 +63,7 @@ export async function GET(request: Request) {
         await connectToDatabase();
         const { searchParams } = new URL(request.url);
         
-        const status = searchParams.get('status') || 'pending';
+        const status = searchParams.get('status');
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = parseInt(searchParams.get('limit') || '5', 10);
         const sort = searchParams.get('sort') || 'asc';
@@ -71,7 +71,10 @@ export async function GET(request: Request) {
         const skip = (page - 1) * limit;
         const sortOrder = sort === 'desc' ? -1 : 1;
         
-        const query = { status };
+        const query: { status?: string } = {};
+        if (status) {
+            query.status = status;
+        }
 
         const orders = await Order.find(query)
             .sort({ createdAt: sortOrder })
