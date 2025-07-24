@@ -9,12 +9,12 @@ import { CustomizationForm } from "./customization-form";
 import { ScrollArea } from "./ui/scroll-area";
 
 const frames = [
-  { id: 1, name: "Classic Oak", imageUrl: "https://placehold.co/400x500", hint: "wood frame" },
-  { id: 2, name: "Modern Black", imageUrl: "https://placehold.co/400x500", hint: "modern frame" },
-  { id: 3, name: "Vintage Gold", imageUrl: "https://placehold.co/400x500", hint: "ornate frame" },
-  { id: 4, name: "Minimalist White", imageUrl: "https://placehold.co/400x500", hint: "white frame" },
-  { id: 5, name: "Rustic Pine", imageUrl: "https://placehold.co/400x500", hint: "rustic frame" },
-  { id: 6, name: "Sleek Silver", imageUrl: "https://placehold.co/400x500", hint: "metal frame" },
+  { id: 1, name: "Classic Oak", imageUrl: "https://placehold.co/400x500", hint: "wood frame", price: 200 },
+  { id: 2, name: "Modern Black", imageUrl: "https://placehold.co/400x500", hint: "modern frame", price: 250 },
+  { id: 3, name: "Vintage Gold", imageUrl: "https://placehold.co/400x500", hint: "ornate frame", price: 250 },
+  { id: 4, name: "Minimalist White", imageUrl: "https://placehold.co/400x500", hint: "white frame", price: 300 },
+  { id: 5, name: "Rustic Pine", imageUrl: "https://placehold.co/400x500", hint: "rustic frame", price: 300 },
+  { id: 6, name: "Sleek Silver", imageUrl: "https://placehold.co/400x500", hint: "metal frame", price: 500 },
 ];
 
 export function FrameGallery() {
@@ -43,6 +43,9 @@ export function FrameGallery() {
                     className="object-cover rounded-md"
                     data-ai-hint={frame.hint}
                 />
+              </div>
+               <div className="flex justify-between items-center mt-auto">
+                <p className="text-xl font-bold text-primary">₹{frame.price}</p>
               </div>
             </CardContent>
             <CardFooter>

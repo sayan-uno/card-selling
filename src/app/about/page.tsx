@@ -41,6 +41,17 @@ export default function AboutPage() {
                     </p>
                 </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline text-2xl text-primary">What's Next?</CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                    <p>
+                        We are just getting started! We will be coming very soon with a wider variety of frame styles, materials, and customization options to give you even more ways to express yourself. Stay tuned for exciting new additions to our collection!
+                    </p>
+                </CardContent>
+            </Card>
         </div>
       </div>
     </div>
