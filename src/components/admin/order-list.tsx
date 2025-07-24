@@ -86,8 +86,10 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
 
   useEffect(() => {
     setPage(1);
+    setOrders([]);
     fetchOrders(1, sortOrder);
   }, [status, sortOrder, fetchOrders]);
+
 
   const handleLoadMore = () => {
     const newPage = page + 1;
@@ -248,5 +250,3 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
-
-    
