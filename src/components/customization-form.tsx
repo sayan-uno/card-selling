@@ -32,7 +32,7 @@ const formSchema = z.object({
   state: z.string().min(2, "State is required."),
   district: z.string().min(2, "District is required."),
   pinCode: z.string().regex(/^\d{6}$/, "A valid 6-digit PIN code is required."),
-  landmark: z.string().optional(),
+  landmark: z.string().min(2, "Landmark is required."),
   villageOrCity: z.string().min(2, "City/Village is required."),
   phone: z.string().min(10, "A valid phone number is required.").max(20, "Phone number is too long."),
   email: z.string().email("A valid email address is required.").max(50, "Email address is too long."),
@@ -360,7 +360,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             <FormField control={form.control} name="district" render={({ field }) => (<FormItem><FormLabel>District</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="pinCode" render={({ field }) => (<FormItem><FormLabel>PIN Code</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
             <FormField control={form.control} name="villageOrCity" render={({ field }) => (<FormItem><FormLabel>Village/City</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={form.control} name="landmark" render={({ field }) => (<FormItem><FormLabel>Landmark (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={form.control} name="landmark" render={({ field }) => (<FormItem><FormLabel>Landmark</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
           </CardContent>
         </Card>
 

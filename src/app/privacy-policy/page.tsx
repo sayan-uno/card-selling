@@ -66,6 +66,23 @@ export default function PrivacyPolicyPage() {
             </CardContent>
           </Card>
 
+           <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary">Pricing and Payment</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p>
+                The prices shown on our website are minimum estimates. The final price of your custom frame depends on the size and complexity of your order.
+              </p>
+              <p>
+                The actual price will be communicated to you during the demo period after you have submitted your customization details.
+              </p>
+              <p>
+                During the demo period, you will have the option to pay online or choose cash on delivery (COD) for your order.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary">Communications via Instagram</CardTitle>
