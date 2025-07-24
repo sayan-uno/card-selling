@@ -64,7 +64,7 @@ const formSchema = z.object({
             path: ['photoUrl']
         });
     }
-    if(data.photoOption === 'upload' && !data.photoUrl) {
+    if(data.photoOption === 'upload' && !data.photoUrl && data.mode === 'quote') {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Please upload a photo when this option is selected.",
