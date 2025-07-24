@@ -294,6 +294,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
                             <CardHeader><CardTitle className='text-lg'>Shipping Address</CardTitle></CardHeader>
                             <CardContent className="space-y-1">
                                 <p><strong>Address:</strong> {selectedOrder.villageOrCity}, {selectedOrder.landmark}</p>
+
                                 <p><strong>District:</strong> {selectedOrder.district}</p>
                                 <p><strong>State:</strong> {selectedOrder.state}, {selectedOrder.country}</p>
                                 <p><strong>PIN Code:</strong> {selectedOrder.pinCode}</p>
@@ -315,5 +316,3 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
-
-    

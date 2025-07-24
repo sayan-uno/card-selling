@@ -81,6 +81,7 @@ type CustomizationFormProps = {
 export function CustomizationForm({ frame }: CustomizationFormProps) {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -145,6 +146,8 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
         return;
     }
     
+    setIsSubmitting(true);
+
     const orderData = {
         frameId: frame.id,
         frameName: frame.name,
@@ -181,6 +184,8 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             description: "An unexpected error occurred.",
             variant: "destructive"
         });
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
@@ -386,13 +391,11 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
             </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={form.formState.isSubmitting || isUploading}>
-            {form.formState.isSubmitting ? <Loader2 className="w-5 h-5 animate-spin"/> : 'Book a Demo'}
+        <Button type="submit" className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={isSubmitting || isUploading}>
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin"/> : 'Book a Demo'}
         </Button>
         <p className="text-xs text-center text-muted-foreground mt-2">After submitting, we'll contact you with a demo of your custom frame for your approval.</p>
       </form>
     </Form>
   );
 }
-
-    

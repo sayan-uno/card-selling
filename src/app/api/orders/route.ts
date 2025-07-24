@@ -45,7 +45,6 @@ export async function POST(request: Request) {
     await connectToDatabase();
     const body = await request.json();
     
-    // Explicitly set status to 'pending' to ensure it's set correctly
     const newOrder = new Order({
       ...body,
       status: 'pending'
@@ -98,5 +97,3 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ message: errorMessage, error: true }, { status: 500 });
     }
 }
-
-    
