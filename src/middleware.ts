@@ -14,6 +14,11 @@ async function verify(token: string, secret: JWK): Promise<any> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // If the request is for the admin login page, let it through.
+  if (pathname === '/admin/login') {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith('/admin')) {
     const token = request.cookies.get('auth_token')?.value;
 
