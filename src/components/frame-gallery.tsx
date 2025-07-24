@@ -9,12 +9,12 @@ import { CustomizationForm } from "./customization-form";
 import { ScrollArea } from "./ui/scroll-area";
 
 const frames = [
-  { id: 1, name: "Classic Oak", imageUrl: "https://placehold.co/400x500", hint: "wood frame", price: 200 },
-  { id: 2, name: "Modern Black", imageUrl: "https://placehold.co/400x500", hint: "modern frame", price: 250 },
-  { id: 3, name: "Vintage Gold", imageUrl: "https://placehold.co/400x500", hint: "ornate frame", price: 250 },
-  { id: 4, name: "Minimalist White", imageUrl: "https://placehold.co/400x500", hint: "white frame", price: 300 },
-  { id: 5, name: "Rustic Pine", imageUrl: "https://placehold.co/400x500", hint: "rustic frame", price: 300 },
-  { id: 6, name: "Sleek Silver", imageUrl: "https://placehold.co/400x500", hint: "metal frame", price: 500 },
+  { id: 1, name: "Classic Oak", imageUrl: "/img/images1.png", hint: "wood frame", price: 200 },
+  { id: 2, name: "Modern Black", imageUrl: "/img/images2.png", hint: "modern frame", price: 250 },
+  { id: 3, name: "Vintage Gold", imageUrl: "/img/images3.png", hint: "ornate frame", price: 250 },
+  { id: 4, name: "Minimalist White", imageUrl: "/img/images4.jpg", hint: "white frame", price: 300 },
+  { id: 5, name: "Rustic Pine", imageUrl: "/img/images5.jpg", hint: "rustic frame", price: 300 },
+  { id: 6, name: "Sleek Silver", imageUrl: "/img/images6.png", hint: "metal frame", price: 500 },
 ];
 
 export function FrameGallery() {
@@ -35,7 +35,7 @@ export function FrameGallery() {
               <CardTitle className="font-headline text-xl text-primary">{frame.name}</CardTitle>
             </CardHeader>
             <CardContent className="flex-grow flex flex-col">
-              <div className="relative aspect-[4/5] w-full mb-4">
+              <div className="relative aspect-square w-full mb-4">
                  <Image
                     src={frame.imageUrl}
                     alt={frame.name}
@@ -45,7 +45,7 @@ export function FrameGallery() {
                 />
               </div>
                <div className="flex justify-between items-center mt-auto">
-                <p className="text-xl font-bold text-primary">₹{frame.price}</p>
+                <p className="text-xl font-bold text-primary"><span style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif" }}>₹{frame.price}</span></p>
               </div>
             </CardContent>
             <CardFooter>
