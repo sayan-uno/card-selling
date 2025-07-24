@@ -66,10 +66,10 @@ export async function GET(request: Request) {
         const status = searchParams.get('status');
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = parseInt(searchParams.get('limit') || '5', 10);
-        const sort = searchParams.get('sort') || 'asc';
+        const sort = searchParams.get('sort') || 'desc';
 
         const skip = (page - 1) * limit;
-        const sortOrder = sort === 'desc' ? -1 : 1;
+        const sortOrder = sort === 'asc' ? 1 : -1;
         
         const query: { status?: string } = {};
         if (status && ['pending', 'solved', 'denied'].includes(status)) {
