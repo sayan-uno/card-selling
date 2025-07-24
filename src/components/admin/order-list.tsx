@@ -52,31 +52,31 @@ const frames = [
 
 const getFrameById = (id: number) => frames.find(f => f.id === id);
 
-
 export default function OrderList({ status }: { status: 'pending' | 'solved' | 'denied' }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc', append: boolean = false) => {
+  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc') => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/orders?status=${status}&page=${pageNum}&limit=5&sort=${currentSort}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch orders');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch orders');
       }
       const data = await response.json();
-      setOrders(prev => append ? [...prev, ...data.orders] : data.orders);
+      setOrders(prev => pageNum === 1 ? data.orders : [...prev, ...data.orders]);
       setTotal(data.total);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Could not fetch orders.",
+        title: "Error Fetching Orders",
+        description: (error as Error).message,
         variant: "destructive"
       });
     } finally {
@@ -86,7 +86,6 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
 
   useEffect(() => {
     setPage(1);
-    setOrders([]);
     fetchOrders(1, sortOrder);
   }, [status, sortOrder, fetchOrders]);
 
@@ -94,7 +93,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const handleLoadMore = () => {
     const newPage = page + 1;
     setPage(newPage);
-    fetchOrders(newPage, sortOrder, true);
+    fetchOrders(newPage, sortOrder);
   };
 
   const toggleSortOrder = () => {

@@ -62,6 +62,7 @@ export async function GET(request: Request) {
     try {
         await connectToDatabase();
         const { searchParams } = new URL(request.url);
+        
         const status = searchParams.get('status') || 'pending';
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = parseInt(searchParams.get('limit') || '5', 10);
@@ -69,19 +70,22 @@ export async function GET(request: Request) {
 
         const skip = (page - 1) * limit;
         const sortOrder = sort === 'desc' ? -1 : 1;
+        
+        const query = { status };
 
-        const orders = await Order.find({ status })
+        const orders = await Order.find(query)
             .sort({ createdAt: sortOrder })
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .lean();
         
-        const total = await Order.countDocuments({ status });
+        const total = await Order.countDocuments(query);
 
         return NextResponse.json({ orders, total, page, limit });
 
     } catch (error) {
-        console.error(error);
+        console.error('API Error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Internal server error';
-        return NextResponse.json({ message: errorMessage }, { status: 500 });
+        return NextResponse.json({ message: errorMessage, error: true }, { status: 500 });
     }
 }
