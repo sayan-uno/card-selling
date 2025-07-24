@@ -55,6 +55,17 @@ export default function PrivacyPolicyPage() {
             </CardContent>
           </Card>
 
+           <Card>
+            <CardHeader>
+              <CardTitle className="font-headline text-2xl text-primary">Order &amp; Demo Process</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                After you submit an order, we will contact you using the provided contact details to share a demo of the frame design. We will show you the design for your approval and accommodate any changes you might need. Once you accept the final design, we will proceed with creating and delivering the frame to your address.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="font-headline text-2xl text-primary">Communications via Instagram</CardTitle>

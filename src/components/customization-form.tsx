@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,11 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
-import { Separator } from "./ui/separator";
-import { useState } from "react";
-import { handleSuggestPhoto } from "@/actions/ai";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Lightbulb, Loader2, Quote, Upload, User, Image as ImageIcon } from "lucide-react";
+import { Quote, Upload, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const formSchema = z.object({
@@ -50,8 +46,6 @@ type CustomizationFormProps = {
 
 export function CustomizationForm({ frame }: CustomizationFormProps) {
   const { toast } = useToast();
-  const [isSuggesting, setIsSuggesting] = useState(false);
-  const [suggestion, setSuggestion] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,29 +64,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     },
   });
 
-  const quoteValue = form.watch("quote");
   const photoOption = form.watch("photoOption");
-
-  async function onSuggest() {
-    if (!quoteValue) {
-        form.setError("quote", { type: "manual", message: "Please enter a quote to get a suggestion." });
-        return;
-    }
-    setIsSuggesting(true);
-    setSuggestion(null);
-    try {
-      const result = await handleSuggestPhoto(quoteValue);
-      setSuggestion(result.photoSuggestion);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Suggestion Failed",
-        description: "Could not get a photo suggestion. Please try again.",
-      });
-    } finally {
-      setIsSuggesting(false);
-    }
-  }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log({ frame, ...values });
@@ -169,7 +141,7 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
                         <FormControl>
                           <RadioGroupItem value="suggest" />
                         </FormControl>
-                        <FormLabel className="font-normal">Suggest a Photo for Me (AI)</FormLabel>
+                        <FormLabel className="font-normal">Suggest a photo in demo</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
@@ -184,21 +156,12 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
                   <AlertDescription>The photo upload feature is not yet available. We'll contact you via email to collect the photo after you submit your order.</AlertDescription>
                 </Alert>
             )}
-            {photoOption === 'suggest' && (
-              <div className="mt-4 space-y-4">
-                <Button type="button" onClick={onSuggest} disabled={isSuggesting || !quoteValue}>
-                  {isSuggesting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Get Suggestion
-                </Button>
-                {isSuggesting && <p className="text-sm text-muted-foreground">Our AI is thinking...</p>}
-                {suggestion && (
-                  <Alert variant="default" className="bg-secondary">
-                    <Lightbulb className="h-4 w-4" />
-                    <AlertTitle>AI Photo Suggestion</AlertTitle>
-                    <AlertDescription className="text-sm">Here's a concept for a photo that would match your quote: <span className="font-semibold">{suggestion}</span>. We will find a suitable image and show you in the demo.</AlertDescription>
-                  </Alert>
-                )}
-              </div>
+             {photoOption === 'suggest' && (
+                <Alert className="mt-4" variant="default">
+                    <ImageIcon className="h-4 w-4" />
+                    <AlertTitle>Photo Suggestion</AlertTitle>
+                    <AlertDescription>We will find a suitable image for your quote and include it in the demo we send you for approval.</AlertDescription>
+                </Alert>
             )}
           </CardContent>
         </Card>
