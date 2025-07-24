@@ -67,7 +67,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (isNewSort = false) => {
+  const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/orders?status=${status}&page=1&limit=5&sort=${sortOrder}`);
@@ -91,8 +91,8 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   }, [status, sortOrder, toast]);
 
   useEffect(() => {
-    fetchOrders(true);
-  }, [sortOrder, status, fetchOrders]);
+    fetchOrders();
+  }, [fetchOrders]);
 
 
   const handleLoadMore = async () => {
@@ -315,3 +315,5 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
     </div>
   );
 }
+
+    

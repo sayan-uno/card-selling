@@ -56,18 +56,19 @@ const formSchema = z.object({
                 path: ['author']
             });
         }
+        if(data.photoOption === 'upload' && !data.photoUrl) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Please upload a photo when this option is selected.",
+                path: ['photoUrl']
+            });
+        }
     }
+    
     if (data.mode === 'photo' && !data.photoUrl) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Please upload a photo for photo-only mode.",
-            path: ['photoUrl']
-        });
-    }
-    if(data.photoOption === 'upload' && !data.photoUrl && data.mode === 'quote') {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Please upload a photo when this option is selected.",
             path: ['photoUrl']
         });
     }
@@ -393,3 +394,5 @@ export function CustomizationForm({ frame }: CustomizationFormProps) {
     </Form>
   );
 }
+
+    
