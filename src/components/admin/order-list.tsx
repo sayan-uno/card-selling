@@ -57,13 +57,13 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState(0);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
-  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc') => {
+  const fetchOrders = useCallback(async (pageNum: number, currentSort: 'asc' | 'desc', append: boolean = false) => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/orders?status=${status}&page=${pageNum}&limit=5&sort=${currentSort}`);
@@ -71,8 +71,8 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
         throw new Error('Failed to fetch orders');
       }
       const data = await response.json();
-      setOrders(prev => pageNum === 1 ? data.orders : [...prev, ...data.orders]);
-      setHasMore(data.orders.length > 0 && (pageNum * 5) < data.total);
+      setOrders(prev => append ? [...prev, ...data.orders] : data.orders);
+      setTotal(data.total);
     } catch (error) {
       toast({
         title: "Error",
@@ -85,7 +85,6 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   }, [status, toast]);
 
   useEffect(() => {
-    setOrders([]);
     setPage(1);
     fetchOrders(1, sortOrder);
   }, [status, sortOrder, fetchOrders]);
@@ -93,12 +92,14 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
   const handleLoadMore = () => {
     const newPage = page + 1;
     setPage(newPage);
-    fetchOrders(newPage, sortOrder);
+    fetchOrders(newPage, sortOrder, true);
   };
 
   const toggleSortOrder = () => {
     setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
   };
+  
+  const hasMore = orders.length < total;
 
   const handleUpdateStatus = async (id: string, newStatus: 'solved' | 'denied' | 'pending') => {
     try {
@@ -110,6 +111,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
       if (!response.ok) throw new Error(`Failed to move order to ${newStatus}`);
       
       setOrders(prev => prev.filter(order => order._id !== id));
+      setTotal(prev => prev -1);
       toast({
         title: "Success",
         description: `Order moved to ${newStatus}.`
@@ -186,7 +188,7 @@ export default function OrderList({ status }: { status: 'pending' | 'solved' | '
         </div>
       )}
 
-      {hasMore && !isLoading && (
+      {hasMore && (
         <div className="mt-6 text-center">
             <Button onClick={handleLoadMore} disabled={isLoading}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Loading...</> : 'Load More'}
