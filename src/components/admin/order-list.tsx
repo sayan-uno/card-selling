@@ -41,18 +41,18 @@ interface Order {
 }
 
 const frames = [
-  { id: 1, name: "Classic Oak", imageUrl: "/img/images1.png" },
-  { id: 2, name: "Modern Black", imageUrl: "/img/images2.png" },
-  { id: 3, name: "Vintage Gold", imageUrl: "/img/images3.png" },
-  { id: 4, name: "Minimalist White", imageUrl: "/img/images4.jpg" },
-  { id: 5, name: "Rustic Pine", imageUrl: "/img/images5.jpg" },
-  { id: 6, name: "Sleek Silver", imageUrl: "/img/images6.png" },
-  { id: 7, name: "Deep Walnut", imageUrl: "/img/images7.png" },
-  { id: 8, name: "Shadow Box", imageUrl: "/img/images8.png" },
-  { id: 9, name: "Ornate Silver", imageUrl: "/img/images9.jpg" },
-  { id: 10, name: "Gallery White", imageUrl: "/img/images10.jpg" },
-  { id: 11, name: "Barnwood Style", imageUrl: "/img/images11.png" },
-  { id: 12, name: "Polished Chrome", imageUrl: "/img/images12.png" },
+  { id: 1, name: "Modern Black Frame", imageUrl: "/img/images1.png" },
+  { id: 2, name: "Classic Gold Leaf", imageUrl: "/img/images2.png" },
+  { id: 3, name: "Ornate Vintage Gold", imageUrl: "/img/images3.png" },
+  { id: 4, name: "Minimalist Matte Black", imageUrl: "/img/images4.jpg" },
+  { id: 5, name: "Natural Barnwood", imageUrl: "/img/images5.jpg" },
+  { id: 6, name: "Polished Silver Metal", imageUrl: "/img/images6.png" },
+  { id: 7, name: "Rich Walnut Finish", imageUrl: "/img/images7.png" },
+  { id: 8, name: "Deep Shadow Box", imageUrl: "/img/images8.png" },
+  { id: 9, name: "Elegant Ornate Silver", imageUrl: "/img/images9.jpg" },
+  { id: 10, name: "Modern Gallery White", imageUrl: "/img/images10.jpg" },
+  { id: 11, name: "Rustic Reclaimed Wood", imageUrl: "/img/images11.png" },
+  { id: 12, name: "Sleek Polished Chrome", imageUrl: "/img/images12.png" },
 ];
 
 const getFrameById = (id: number) => frames.find(f => f.id === id);

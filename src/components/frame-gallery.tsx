@@ -11,18 +11,18 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Eye } from "lucide-react";
 
 const frames = [
-  { id: 1, name: "Classic Oak", imageUrl: "/img/images1.png", hint: "wood frame", price: 200 },
-  { id: 2, name: "Modern Black", imageUrl: "/img/images2.png", hint: "modern frame", price: 250 },
-  { id: 3, name: "Vintage Gold", imageUrl: "/img/images3.png", hint: "ornate frame", price: 250 },
-  { id: 4, name: "Minimalist White", imageUrl: "/img/images4.jpg", hint: "white frame", price: 300 },
-  { id: 5, name: "Rustic Pine", imageUrl: "/img/images5.jpg", hint: "rustic frame", price: 300 },
-  { id: 6, name: "Sleek Silver", imageUrl: "/img/images6.png", hint: "metal frame", price: 500 },
-  { id: 7, name: "Deep Walnut", imageUrl: "/img/images7.png", hint: "dark wood frame", price: 220 },
-  { id: 8, name: "Shadow Box", imageUrl: "/img/images8.png", hint: "deep frame", price: 270 },
-  { id: 9, name: "Ornate Silver", imageUrl: "/img/images9.jpg", hint: "decorative frame", price: 280 },
-  { id: 10, name: "Gallery White", imageUrl: "/img/images10.jpg", hint: "gallery frame", price: 320 },
-  { id: 11, name: "Barnwood Style", imageUrl: "/img/images11.png", hint: "reclaimed wood", price: 350 },
-  { id: 12, name: "Polished Chrome", imageUrl: "/img/images12.png", hint: "chrome frame", price: 550 },
+  { id: 1, name: "Modern Black Frame", imageUrl: "/img/images1.png", hint: "wood frame", price: 250 },
+  { id: 2, name: "Classic Gold Leaf", imageUrl: "/img/images2.png", hint: "modern frame", price: 350 },
+  { id: 3, name: "Ornate Vintage Gold", imageUrl: "/img/images3.png", hint: "ornate frame", price: 550 },
+  { id: 4, name: "Minimalist Matte Black", imageUrl: "/img/images4.jpg", hint: "white frame", price: 200 },
+  { id: 5, name: "Natural Barnwood", imageUrl: "/img/images5.jpg", hint: "rustic frame", price: 400 },
+  { id: 6, name: "Polished Silver Metal", imageUrl: "/img/images6.png", hint: "metal frame", price: 450 },
+  { id: 7, name: "Rich Walnut Finish", imageUrl: "/img/images7.png", hint: "dark wood frame", price: 380 },
+  { id: 8, name: "Deep Shadow Box", imageUrl: "/img/images8.png", hint: "deep frame", price: 600 },
+  { id: 9, name: "Elegant Ornate Silver", imageUrl: "/img/images9.jpg", hint: "decorative frame", price: 580 },
+  { id: 10, name: "Modern Gallery White", imageUrl: "/img/images10.jpg", hint: "gallery frame", price: 320 },
+  { id: 11, name: "Rustic Reclaimed Wood", imageUrl: "/img/images11.png", hint: "reclaimed wood", price: 350 },
+  { id: 12, name: "Sleek Polished Chrome", imageUrl: "/img/images12.png", hint: "chrome frame", price: 550 },
 ];
 
 export function FrameGallery() {
@@ -68,7 +68,7 @@ export function FrameGallery() {
               </div>
                <div className="flex justify-between items-center mt-auto">
                 <div>
-                  <p className="text-xl font-bold text-primary">from ₹{frame.price}</p>
+                  <p className="text-xl font-bold text-primary"><span style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif" }}>from ₹{frame.price}</span></p>
                   <p className="text-xs text-muted-foreground">Price varies with size</p>
                 </div>
               </div>
