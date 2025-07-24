@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { CustomizationForm } from "./customization-form";
 import { ScrollArea } from "./ui/scroll-area";
+import { Eye } from "lucide-react";
 
 const frames = [
   { id: 1, name: "Classic Oak", imageUrl: "/img/images1.png", hint: "wood frame", price: 200 },
@@ -15,16 +16,30 @@ const frames = [
   { id: 4, name: "Minimalist White", imageUrl: "/img/images4.jpg", hint: "white frame", price: 300 },
   { id: 5, name: "Rustic Pine", imageUrl: "/img/images5.jpg", hint: "rustic frame", price: 300 },
   { id: 6, name: "Sleek Silver", imageUrl: "/img/images6.png", hint: "metal frame", price: 500 },
+  { id: 7, name: "Deep Walnut", imageUrl: "/img/images7.png", hint: "dark wood frame", price: 220 },
+  { id: 8, name: "Shadow Box", imageUrl: "/img/images8.png", hint: "deep frame", price: 270 },
+  { id: 9, name: "Ornate Silver", imageUrl: "/img/images9.jpg", hint: "decorative frame", price: 280 },
+  { id: 10, name: "Gallery White", imageUrl: "/img/images10.jpg", hint: "gallery frame", price: 320 },
+  { id: 11, name: "Barnwood Style", imageUrl: "/img/images11.png", hint: "reclaimed wood", price: 350 },
+  { id: 12, name: "Polished Chrome", imageUrl: "/img/images12.png", hint: "chrome frame", price: 550 },
 ];
 
 export function FrameGallery() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [selectedFrame, setSelectedFrame] = useState<(typeof frames)[0] | null>(null);
+  const [isImageViewerOpen, setImageViewerOpen] = useState(false);
+  const [viewingImage, setViewingImage] = useState<{src: string, alt: string} | null>(null);
 
   const handleChooseClick = (frame: (typeof frames)[0]) => {
     setSelectedFrame(frame);
     setDialogOpen(true);
   };
+
+  const handleImageClick = (frame: (typeof frames)[0]) => {
+    setViewingImage({src: frame.imageUrl, alt: frame.name});
+    setImageViewerOpen(true);
+  };
+
 
   return (
     <>
@@ -35,7 +50,10 @@ export function FrameGallery() {
               <CardTitle className="font-headline text-xl text-primary">{frame.name}</CardTitle>
             </CardHeader>
             <CardContent className="flex-grow flex flex-col">
-              <div className="relative aspect-square w-full mb-4">
+              <div 
+                className="relative aspect-square w-full mb-4 cursor-pointer group"
+                onClick={() => handleImageClick(frame)}
+              >
                  <Image
                     src={frame.imageUrl}
                     alt={frame.name}
@@ -43,9 +61,12 @@ export function FrameGallery() {
                     className="object-cover rounded-md"
                     data-ai-hint={frame.hint}
                 />
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Eye className="w-8 h-8 text-white" />
+                </div>
               </div>
                <div className="flex justify-between items-center mt-auto">
-                <p className="text-xl font-bold text-primary"><span style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif" }}>₹{frame.price}</span></p>
+                <p className="text-xl font-bold text-primary">₹{frame.price}</p>
               </div>
             </CardContent>
             <CardFooter>
@@ -70,6 +91,21 @@ export function FrameGallery() {
                 <CustomizationForm frame={selectedFrame} />
               </div>
             </ScrollArea>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={isImageViewerOpen} onOpenChange={setImageViewerOpen}>
+        <DialogContent className="max-w-3xl h-[80vh] p-2">
+            {viewingImage && (
+                <div className="relative w-full h-full">
+                    <Image 
+                        src={viewingImage.src} 
+                        alt={viewingImage.alt} 
+                        fill
+                        className="object-contain" 
+                    />
+                </div>
+            )}
         </DialogContent>
       </Dialog>
     </>
