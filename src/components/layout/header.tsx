@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Frame, Facebook } from "lucide-react";
+import { Menu, Frame, Facebook, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,8 +10,16 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger, 
+  DropdownMenuSeparator 
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,12 +28,96 @@ const navLinks = [
   { href: "/privacy-policy", label: "Privacy Policy" },
 ];
 
+interface User {
+  name: string;
+  pictureUrl: string;
+}
+
 export function Header() {
   const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/user');
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUser();
+  }, [pathname]); // Refetch on path change to update state after login redirect
 
   const handleFacebookLogin = () => {
-    // Redirect to our new login API route
     window.location.href = '/api/auth/facebook/login';
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      setUser(null);
+      window.location.href = '/'; // Redirect to home to clear state
+    } catch (error) {
+      console.error("Failed to logout", error);
+    }
+  };
+
+  const UserMenu = ({ isMobile = false }) => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+          <div className="h-4 w-20 rounded-md bg-muted animate-pulse" />
+        </div>
+      );
+    }
+
+    if (!user) {
+      return (
+        <Button 
+          variant={isMobile ? "outline" : "default"} 
+          size="sm" 
+          className={cn(isMobile && "w-full justify-start")}
+          onClick={handleFacebookLogin}
+        >
+          <Facebook className="mr-2 h-4 w-4" /> Login with Facebook
+        </Button>
+      );
+    }
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-auto px-2 gap-2">
+             <Avatar className="h-8 w-8">
+              <AvatarImage src={user.pictureUrl} alt={user.name} />
+              <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <span className="hidden sm:inline-block">{user.name}</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuItem disabled>
+            <div className="font-medium">{user.name}</div>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   };
 
   return (
@@ -42,10 +134,7 @@ export function Header() {
               href={link.href}
               className={cn(
                 "transition-colors hover:text-primary",
-                (pathname.startsWith(link.href) && link.href !== "/") ||
-                  pathname === link.href
-                  ? "text-primary"
-                  : "text-muted-foreground"
+                pathname === link.href ? "text-primary" : "text-muted-foreground"
               )}
             >
               {link.label}
@@ -53,9 +142,9 @@ export function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="hidden md:flex" onClick={handleFacebookLogin}>
-            <Facebook className="mr-2 h-4 w-4" /> Login with Facebook
-          </Button>
+          <div className="hidden md:flex">
+            <UserMenu />
+          </div>
 
           <div className="md:hidden">
             <Sheet>
@@ -73,11 +162,7 @@ export function Header() {
                         href={link.href}
                         className={cn(
                           "text-lg",
-                          (pathname.startsWith(link.href) &&
-                            link.href !== "/") ||
-                            pathname === link.href
-                            ? "text-primary font-semibold"
-                            : "text-muted-foreground"
+                          pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
                         )}
                       >
                         {link.label}
@@ -85,9 +170,7 @@ export function Header() {
                     </SheetClose>
                   ))}
                   <div className="pt-4 border-t">
-                     <Button variant="outline" className="w-full justify-start" onClick={handleFacebookLogin}>
-                          <Facebook className="mr-2 h-4 w-4" /> Login with Facebook
-                     </Button>
+                     <UserMenu isMobile={true}/>
                   </div>
                 </nav>
               </SheetContent>
