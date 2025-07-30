@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Frame, Facebook, Instagram } from "lucide-react";
+import { Menu, Frame, Facebook, Instagram, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -41,7 +41,7 @@ export function Header() {
   const [isInstagramConnected, setIsInstagramConnected] = useState(false);
   const [isFacebookDialogOpen, setFacebookDialogOpen] = useState(false);
   const [isInstagramDialogOpen, setInstagramDialogOpen] = useState(false);
-
+  const [showPermissions, setShowPermissions] = useState(false);
 
   const handleFacebookLogin = () => {
     setStep(2);
@@ -58,9 +58,9 @@ export function Header() {
         setIsInstagramConnected(true);
         setInstagramDialogOpen(false);
         setStep(1);
+        setShowPermissions(false); // Reset on close
     }, 1500);
   };
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -156,15 +156,26 @@ export function Header() {
                     <div className="space-y-6">
                         <Card>
                             <CardContent className="p-4 space-y-4">
-                                <h3 className="font-semibold">Permissions Requested</h3>
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="manage-messages">Manage messages</Label>
-                                    <Switch id="manage-messages" defaultChecked disabled />
-                                </div>
-                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="instagram-basic">Basic account info</Label>
-                                    <Switch id="instagram-basic" defaultChecked disabled />
-                                </div>
+                               <div className="flex justify-between items-center">
+                                  <h3 className="font-semibold">Permissions Requested</h3>
+                                  <Button variant="ghost" size="sm" onClick={() => setShowPermissions(!showPermissions)}>
+                                    <Settings2 className="mr-2 h-4 w-4" />
+                                    Edit Access
+                                  </Button>
+                               </div>
+
+                                {showPermissions && (
+                                   <div className="space-y-4 pt-2">
+                                       <div className="flex items-center justify-between">
+                                            <Label htmlFor="manage-messages">Manage messages</Label>
+                                            <Switch id="manage-messages" defaultChecked disabled />
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="instagram-basic">Basic account info</Label>
+                                            <Switch id="instagram-basic" defaultChecked disabled />
+                                        </div>
+                                   </div>
+                                )}
                             </CardContent>
                         </Card>
                         <div className="flex flex-col items-center gap-4">
