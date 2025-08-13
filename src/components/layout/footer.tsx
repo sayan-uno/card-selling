@@ -11,12 +11,12 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center justify-center md:justify-start gap-2 mb-2">
               <Frame className="h-6 w-6" />
-              <span className="font-bold text-lg font-headline">Sayan Quotes</span>
+              <span className="font-bold text-lg font-headline">Sayan pays</span>
             </Link>
-            <p className="text-sm text-primary-foreground/80">&copy; {currentYear} Sayan Quotes. All rights reserved.</p>
+            <p className="text-sm text-primary-foreground/80">&copy; {currentYear} quickpays. All rights reserved.</p>
           </div>
           <div className="md:col-span-1">
-            <h3 className="font-headline text-lg font-semibold mb-2">Quick Links</h3>
+            <h3 className="font-headline text-lg font-semibold mb-2">Quick Pays</h3>
              <div className="flex flex-col space-y-2 text-sm">
                 <Link href="/" className="hover:underline text-primary-foreground/80">Home</Link>
                 <Link href="/about" className="hover:underline text-primary-foreground/80">About Us</Link>
