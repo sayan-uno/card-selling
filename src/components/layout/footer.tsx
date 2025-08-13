@@ -11,7 +11,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center justify-center md:justify-start gap-2 mb-2">
               <Frame className="h-6 w-6" />
-              <span className="font-bold text-lg font-headline">Sayan pays</span>
+              <span className="font-bold text-lg font-headline">Quick pays</span>
             </Link>
             <p className="text-sm text-primary-foreground/80">&copy; {currentYear} quickpays. All rights reserved.</p>
           </div>
