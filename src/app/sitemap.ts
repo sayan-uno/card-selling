@@ -3,30 +3,20 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.sayan.uno';
   
-  return [
-    {
-      url: baseUrl,
+  const routes = [
+    '', 
+    '/about', 
+    '/contact', 
+    '/privacy-policy', 
+    '/terms-and-conditions', 
+    '/shipping-policy', 
+    '/refund-policy'
+  ];
+
+  return routes.map((route) => ({
+      url: `${baseUrl}${route}`,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-  ]
+      changeFrequency: route === '' ? 'daily' : 'monthly',
+      priority: route === '' ? 1 : 0.8,
+  }));
 }

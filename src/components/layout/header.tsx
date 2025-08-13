@@ -20,13 +20,20 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
+import { Separator } from "../ui/separator";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/privacy-policy", label: "Privacy Policy" },
 ];
+
+const policyLinks = [
+    { href: "/privacy-policy", label: "Privacy Policy" },
+    { href: "/terms-and-conditions", label: "Terms & Conditions" },
+    { href: "/shipping-policy", label: "Shipping Policy" },
+    { href: "/refund-policy", label: "Refund Policy" },
+]
 
 interface User {
   name: string;
@@ -140,6 +147,20 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+           <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="text-muted-foreground hover:text-primary px-0">
+                        Policies
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    {policyLinks.map(link => (
+                         <DropdownMenuItem key={link.href} asChild>
+                            <Link href={link.href}>{link.label}</Link>
+                         </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </nav>
         <div className="flex items-center gap-2">
           <div className="hidden md:flex">
@@ -157,6 +178,20 @@ export function Header() {
               <SheetContent side="right">
                 <nav className="flex flex-col space-y-4 mt-8">
                   {navLinks.map((link) => (
+                    <SheetClose asChild key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={cn(
+                          "text-lg",
+                          pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                  <Separator/>
+                   {policyLinks.map((link) => (
                     <SheetClose asChild key={link.href}>
                       <Link
                         href={link.href}
